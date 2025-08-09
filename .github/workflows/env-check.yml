@@ -3,14 +3,29 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  NODE_VERSION: '20.x'
+  PNPM_VERSION: '9'
+
 jobs:
   env-check:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Enable corepack
-        run: corepack enable
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
       - name: Make script executable
         run: chmod +x scripts/verify-env.sh
+        
       - name: Run verification
         run: ./scripts/verify-env.sh
