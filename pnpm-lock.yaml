@@ -72,8 +72,8 @@ importers:
         specifier: ^15.0.0
         version: 15.5.2
       pnpm:
-        specifier: ^9.0.0
-        version: 9.15.9
+        specifier: ^10.0.0
+        version: 10.0.0
       postcss:
         specifier: ^8.0.0
         version: 8.5.6
@@ -3355,8 +3355,8 @@ packages:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
     engines: {node: '>=8'}
 
-  pnpm@9.15.9:
-    resolution: {integrity: sha512-aARhQYk8ZvrQHAeSMRKOmvuJ74fiaR1p5NQO7iKJiClf1GghgbrlW1hBjDolO95lpQXsfF+UA+zlzDzTfc8lMQ==}
+  pnpm@10.0.0:
+    resolution: {integrity: sha512-uP71SUvT/ky9Ttq9B0XfLuW+PksLiwj6ZDqj5MZwLMwPANaPqKjJhYpzWgAySFpEmQ7SgQUmyHXkFvABsX3xKw==}
     engines: {node: '>=18.12'}
     hasBin: true
 
@@ -8287,7 +8287,7 @@ snapshots:
     dependencies:
       find-up: 4.1.0
 
-  pnpm@9.15.9: {}
+  pnpm@10.0.0: {}
 
   possible-typed-array-names@1.1.0: {}
 
