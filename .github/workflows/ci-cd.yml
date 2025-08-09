@@ -1,0 +1,58 @@
+# GitHub Actions CI/CD for Dulce-Web
+# This workflow installs dependencies, lints, typechecks, builds, and runs codegen for the monorepo.
+# It is triggered on push and pull request to main and all branches.
+
+name: CI/CD
+
+on:
+  push:
+    branches: [main, "*"]
+  pull_request:
+    branches: [main, "*"]
+
+jobs:
+  setup-build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Lint
+        run: pnpm --filter ./apps/web lint
+
+      - name: Typecheck
+        run: pnpm --filter ./apps/web typecheck
+
+      - name: Run GraphQL Codegen
+        run: pnpm --filter ./apps/web codegen
+
+      - name: Build
+        run: pnpm --filter ./apps/web build
+
+      # Add test step here if you add tests in the future
+      # - name: Test
+      #   run: pnpm --filter ./apps/web test
+
+      - name: Upload production build (optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: nextjs-build
+          path: apps/web/.next
+
+      # Add deployment step here if deploying to Vercel, Azure, etc.
+      # - name: Deploy
+      #   run: ...

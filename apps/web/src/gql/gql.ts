@@ -14,14 +14,11 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "\n  query PostBySlug($slug: ID!) {\n    post(id: $slug, idType: SLUG) {\n      title\n      content\n      featuredImage { node { sourceUrl altText } }\n    }\n  }\n": typeof types.PostBySlugDocument,
-    "\n  query Recipes {\n    posts(first: 12) {\n      nodes {\n        id\n        slug\n        title\n        excerpt\n        featuredImage { node { sourceUrl altText } }\n      }\n    }\n  }\n": typeof types.RecipesDocument,
-    "\n  query SiteTitle {\n    generalSettings {\n      title\n      description\n    }\n  }\n": typeof types.SiteTitleDocument,
+  '\n  query SiteTitle {\n    generalSettings {\n      title\n      description\n    }\n  }\n': typeof types.SiteTitleDocument;
 };
 const documents: Documents = {
-    "\n  query PostBySlug($slug: ID!) {\n    post(id: $slug, idType: SLUG) {\n      title\n      content\n      featuredImage { node { sourceUrl altText } }\n    }\n  }\n": types.PostBySlugDocument,
-    "\n  query Recipes {\n    posts(first: 12) {\n      nodes {\n        id\n        slug\n        title\n        excerpt\n        featuredImage { node { sourceUrl altText } }\n      }\n    }\n  }\n": types.RecipesDocument,
-    "\n  query SiteTitle {\n    generalSettings {\n      title\n      description\n    }\n  }\n": types.SiteTitleDocument,
+  '\n  query SiteTitle {\n    generalSettings {\n      title\n      description\n    }\n  }\n':
+    types.SiteTitleDocument,
 };
 
 /**
@@ -41,18 +38,13 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query PostBySlug($slug: ID!) {\n    post(id: $slug, idType: SLUG) {\n      title\n      content\n      featuredImage { node { sourceUrl altText } }\n    }\n  }\n"): (typeof documents)["\n  query PostBySlug($slug: ID!) {\n    post(id: $slug, idType: SLUG) {\n      title\n      content\n      featuredImage { node { sourceUrl altText } }\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  query Recipes {\n    posts(first: 12) {\n      nodes {\n        id\n        slug\n        title\n        excerpt\n        featuredImage { node { sourceUrl altText } }\n      }\n    }\n  }\n"): (typeof documents)["\n  query Recipes {\n    posts(first: 12) {\n      nodes {\n        id\n        slug\n        title\n        excerpt\n        featuredImage { node { sourceUrl altText } }\n      }\n    }\n  }\n"];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  query SiteTitle {\n    generalSettings {\n      title\n      description\n    }\n  }\n"): (typeof documents)["\n  query SiteTitle {\n    generalSettings {\n      title\n      description\n    }\n  }\n"];
+export function graphql(
+  source: '\n  query SiteTitle {\n    generalSettings {\n      title\n      description\n    }\n  }\n',
+): (typeof documents)['\n  query SiteTitle {\n    generalSettings {\n      title\n      description\n    }\n  }\n'];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
 }
 
-export type DocumentType<TDocumentNode extends DocumentNode<any, any>> = TDocumentNode extends DocumentNode<  infer TType,  any>  ? TType  : never;
+export type DocumentType<TDocumentNode extends DocumentNode<any, any>> =
+  TDocumentNode extends DocumentNode<infer TType, any> ? TType : never;
