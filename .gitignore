@@ -1,12 +1,7 @@
 node_modules/
 .pnpm-store/
+.env.local
 .next/
-dist/
 out/
-.turbo/
+dist/
 .vercel/
-.env*
-!.env.example
-*.log
-.DS_Store
-Thumbs.db
