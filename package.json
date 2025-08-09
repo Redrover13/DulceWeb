@@ -9,7 +9,9 @@
     "build": "pnpm --filter ./apps/web build",
     "lint": "pnpm --filter ./apps/web lint",
     "typecheck": "pnpm --filter ./apps/web typecheck",
-    "codegen": "pnpm --filter ./apps/web codegen"
+    "codegen": "pnpm --filter ./apps/web codegen",
+    "test": "pnpm --filter ./apps/web test",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\""
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^4.0.0",
@@ -32,6 +34,7 @@
     "graphql-request": "^6.0.0",
     "husky": "^8.0.0",
     "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5",
     "lint-staged": "^15.0.0",
     "pnpm": "^9.0.0",
     "postcss": "^8.0.0",

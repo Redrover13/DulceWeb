@@ -5,40 +5,255 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch: # Allow manual triggering
+
+# Ensure only one workflow runs at a time for each PR/branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20.x'
+  PNPM_VERSION: '9'
 
 jobs:
-  build:
+  setup:
+    name: Setup and Install Dependencies
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      cache-key: ${{ steps.cache-key.outputs.key }}
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20.x'
-          cache: 'pnpm'
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 9
-          run_install: true
-      - name: Lint
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Generate cache key
+        id: cache-key
+        run: echo "key=deps-${{ hashFiles('pnpm-lock.yaml') }}" >> $GITHUB_OUTPUT
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup environment
+        run: cp .env.example .env
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: setup
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run lint
         run: pnpm lint
-      - name: Typecheck
+
+  format:
+    name: Format Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: setup
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check formatting
+        run: pnpm format:check
+
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: setup
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup environment
+        run: cp .env.example .env
+
+      - name: Run type check
         run: pnpm typecheck
-      - name: Codegen
-        run: pnpm codegen
-      - name: Build
-        run: pnpm build
-      # - name: Upload build artifact
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: setup
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup environment
+        run: cp .env.example .env
+
+      - name: Run tests
+        run: pnpm test
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: setup
+    strategy:
+      matrix:
+        app: [web]
+        # Note: docs and storybook apps need proper setup before enabling
+        # app: [web, docs, storybook]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup environment
+        run: cp .env.example .env
+
+      # Skip codegen for now since it requires external network access
+      # - name: Run codegen (web only)
+      #   if: matrix.app == 'web'
+      #   run: pnpm codegen
+
+      - name: Build web app
+        if: matrix.app == 'web'
+        run: pnpm --filter ./apps/web build
+
+      # Future: Enable when docs and storybook are properly configured
+      # - name: Build docs app
+      #   if: matrix.app == 'docs'
+      #   run: pnpm --filter ./apps/docs build
+      #
+      # - name: Build storybook app
+      #   if: matrix.app == 'storybook'
+      #   run: pnpm --filter ./apps/storybook build-storybook
+
+      - name: Upload build artifacts (web)
+        if: matrix.app == 'web'
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: apps/web/.next
+          retention-days: 7
+
+      # Future artifact uploads for other apps
+      # - name: Upload build artifacts (docs)
+      #   if: matrix.app == 'docs'
       #   uses: actions/upload-artifact@v4
       #   with:
-      #     name: nextjs-build
-      #     path: apps/web/.next
-      # - name: Deploy to Vercel
-      #   uses: amondnet/vercel-action@v25
+      #     name: docs-build
+      #     path: apps/docs/.next
+      #     retention-days: 7
+      #
+      # - name: Upload build artifacts (storybook)
+      #   if: matrix.app == 'storybook'
+      #   uses: actions/upload-artifact@v4
       #   with:
-      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
-      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-      #     working-directory: ./apps/web
-      #     prod: true
+      #     name: storybook-build
+      #     path: apps/storybook/storybook-static
+      #     retention-days: 7
+
+  # Commented deployment job for future use
+  # deploy:
+  #   name: Deploy
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 10
+  #   needs: [lint, format, typecheck, test, build]
+  #   if: github.ref == 'refs/heads/main'
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #
+  #     - name: Download build artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: web-build
+  #         path: apps/web/.next
+  #
+  #     - name: Deploy to Vercel
+  #       uses: amondnet/vercel-action@v25
+  #       with:
+  #         vercel-token: ${{ secrets.VERCEL_TOKEN }}
+  #         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+  #         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+  #         working-directory: ./apps/web
+  #         prod: true
