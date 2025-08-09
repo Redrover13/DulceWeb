@@ -52,12 +52,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Setup pnpm with the official action
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 8
-          run_install: false
-
       # Setup Node.js with pnpm caching
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -65,9 +59,20 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
+      # Enable and activate pnpm via Corepack (built into Node.js)
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Activate pnpm
+        run: corepack prepare pnpm@latest --activate
+
+      # Verify pnpm installation
+      - name: Verify pnpm
+        run: pnpm --version
+
       # Install dependencies
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       # Lint
       - name: Lint
