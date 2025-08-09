@@ -17,25 +17,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Setup Node.js first without pnpm cache
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      # Install pnpm using the official action
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 8
-          run_install: false
-
-      # Verify pnpm is properly installed and available in PATH
-      - name: Verify pnpm installation
-        run: |
-          echo "PATH: $PATH"
-          which pnpm || echo "pnpm not found in PATH"
-          pnpm --version
+      # Simple, reliable pnpm installation that always works
+      - name: Install pnpm
+        run: npm install -g pnpm@8.0.0
 
       - name: Install dependencies
         run: pnpm install
