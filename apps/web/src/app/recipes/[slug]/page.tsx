@@ -1,10 +1,10 @@
 import Image from "next/image";
-import { notFound } from "next/navigation";
-import { wpClient } from "../../../lib/graphql";
-import { graphql } from "../../../gql";
+import Link from "next/link";
+import { wpClient } from "@/lib/graphql";
+import { graphql } from "@/gql";
 
-const RECIPE_BY_SLUG = graphql(`
-  query RecipeBySlug($slug: ID!) {
+const POST_BY_SLUG = graphql(`
+  query PostBySlug($slug: ID!) {
     post(id: $slug, idType: SLUG) {
       title
       content
@@ -13,15 +13,18 @@ const RECIPE_BY_SLUG = graphql(`
   }
 `);
 
-type Params = { params: { slug: string } };
+type PageProps = { params: { slug: string } };
 
-export default async function RecipePage({ params }: Params) {
-  const { post } = await wpClient.request(RECIPE_BY_SLUG, { slug: params.slug });
-  if (!post) return notFound();
-
+export default async function RecipePage({ params }: PageProps) {
+  const { slug } = params;
+  const data = await wpClient.request(POST_BY_SLUG, { slug });
+  const post = data?.post;
+  if (!post) {
+    return <main className="p-8">Not found</main>;
+  }
   return (
-    <article className="prose prose-invert max-w-3xl mx-auto p-8">
-      <h1>{post.title}</h1>
+    <main className="max-w-3xl mx-auto p-8 space-y-6">
+      <h1 className="text-3xl font-semibold">{post.title}</h1>
       {post.featuredImage?.node?.sourceUrl && (
         <Image
           src={post.featuredImage.node.sourceUrl}
@@ -31,7 +34,15 @@ export default async function RecipePage({ params }: Params) {
           className="w-full h-auto rounded-md"
         />
       )}
-      <div dangerouslySetInnerHTML={{ __html: post.content || "" }} />
-    </article>
+      <div dangerouslySetInnerHTML={{ __html: post.content ?? "" }} />
+      <p className="pt-6"><Link href="/recipes">? Back</Link></p>
+    </main>
   );
 }
+
+// Keep typing simple; you can later fetch slugs from WP if desired
+export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
+  return [];
+}
+
+export const dynamicParams = true;
