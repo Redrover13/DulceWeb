@@ -1,0 +1,44 @@
+{
+  "name": "dulce-web-monorepo",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter ./apps/web dev",
+    "build": "pnpm --filter ./apps/web build",
+    "lint": "pnpm --filter ./apps/web lint",
+    "typecheck": "pnpm --filter ./apps/web typecheck",
+    "codegen": "pnpm --filter ./apps/web codegen"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^4.0.0",
+    "@graphql-codegen/client-preset": "^4.0.0",
+    "@graphql-codegen/typescript": "^4.0.0",
+    "@graphql-codegen/typescript-graphql-request": "^4.0.0",
+    "@graphql-codegen/typescript-operations": "^4.0.0",
+    "@next/bundle-analyzer": "^13.0.0",
+    "@parcel/watcher": "^2.0.0",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
+    "@types/react": "19.1.9",
+    "dotenv": "^16.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-next": "^13.0.0",
+    "eslint-plugin-jsx-a11y": "^6.0.0",
+    "graphql": "^16.0.0",
+    "graphql-request": "^6.0.0",
+    "husky": "^8.0.0",
+    "jest": "^30.0.5",
+    "lint-staged": "^15.0.0",
+    "pnpm": "^9.0.0",
+    "postcss": "^8.0.0",
+    "prettier": "^3.0.0",
+    "prettier-plugin-tailwindcss": "^0.5.0",
+    "tailwindcss": "^3.0.0",
+    "ts-jest": "^29.4.1",
+    "typescript": "^5.0.0"
+  }
+}

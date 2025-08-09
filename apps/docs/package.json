@@ -1,0 +1,10 @@
+{
+  "name": "docs",
+  "private": true,
+  "scripts": {
+    "dev": "npx nextra dev",
+    "build": "npx nextra build"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
