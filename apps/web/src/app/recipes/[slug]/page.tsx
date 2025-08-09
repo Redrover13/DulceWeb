@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { wpClient } from "@/lib/graphql";
-import { graphql } from "@/gql";
 
-const POST_BY_SLUG = graphql(`
+// Plain string query (no graphql() helper)
+const POST_BY_SLUG = /* GraphQL */ `
   query PostBySlug($slug: ID!) {
     post(id: $slug, idType: SLUG) {
       title
@@ -11,13 +11,22 @@ const POST_BY_SLUG = graphql(`
       featuredImage { node { sourceUrl altText } }
     }
   }
-`);
+`;
+
+type PostBySlugResult = {
+  post?: {
+    title?: string | null
+    content?: string | null
+    featuredImage?: { node?: { sourceUrl?: string | null; altText?: string | null } | null } | null
+  } | null
+};
+type PostBySlugVars = { slug: string };
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 export default async function RecipePage({ params }: PageProps) {
   const { slug } = await params;
-  const data = await wpClient.request(POST_BY_SLUG, { slug });
+  const data = await wpClient.request<PostBySlugResult, PostBySlugVars>(POST_BY_SLUG, { slug });
   const post = data?.post;
   if (!post) return <main className="p-8">Not found</main>;
 
@@ -39,8 +48,5 @@ export default async function RecipePage({ params }: PageProps) {
   );
 }
 
-// We can keep SSG off for now and let it be dynamic
-export function generateStaticParams(): Array<{ slug: string }> {
-  return [];
-}
+export function generateStaticParams(): Array<{ slug: string }> { return []; }
 export const dynamicParams = true;
