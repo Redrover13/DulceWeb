@@ -13,15 +13,14 @@ const POST_BY_SLUG = graphql(`
   }
 `);
 
-type PageProps = { params: { slug: string } };
+type PageProps = { params: Promise<{ slug: string }> };
 
 export default async function RecipePage({ params }: PageProps) {
-  const { slug } = params;
+  const { slug } = await params;
   const data = await wpClient.request(POST_BY_SLUG, { slug });
   const post = data?.post;
-  if (!post) {
-    return <main className="p-8">Not found</main>;
-  }
+  if (!post) return <main className="p-8">Not found</main>;
+
   return (
     <main className="max-w-3xl mx-auto p-8 space-y-6">
       <h1 className="text-3xl font-semibold">{post.title}</h1>
@@ -40,9 +39,8 @@ export default async function RecipePage({ params }: PageProps) {
   );
 }
 
-// Keep typing simple; you can later fetch slugs from WP if desired
-export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
+// We can keep SSG off for now and let it be dynamic
+export function generateStaticParams(): Array<{ slug: string }> {
   return [];
 }
-
 export const dynamicParams = true;
