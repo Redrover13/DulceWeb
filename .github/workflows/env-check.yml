@@ -1,0 +1,16 @@
+name: Env Check
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  env-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enable corepack
+        run: corepack enable
+      - name: Make script executable
+        run: chmod +x scripts/verify-env.sh
+      - name: Run verification
+        run: ./scripts/verify-env.sh
