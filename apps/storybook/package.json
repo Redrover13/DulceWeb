@@ -3,15 +3,8 @@
   "private": true,
   "scripts": {
     "storybook": "storybook dev -p 6006",
-    "build": "storybook build"
+    "build-storybook": "storybook build"
   },
-  "dependencies": {
-    "@storybook/react": "^7.0.0",
-    "@storybook/react-vite": "^7.0.0",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
-  },
-  "devDependencies": {
-    "@storybook/cli": "^7.0.0"
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }
