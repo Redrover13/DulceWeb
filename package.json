@@ -8,8 +8,10 @@
     "dev": "pnpm --filter ./apps/web dev",
     "build": "pnpm --filter ./apps/web build",
     "lint": "pnpm --filter ./apps/web lint",
+    "format:check": "prettier --check .",
     "typecheck": "pnpm --filter ./apps/web typecheck",
-    "codegen": "pnpm --filter ./apps/web codegen"
+    "codegen": "pnpm --filter ./apps/web codegen",
+    "test": "jest"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^4.0.0",

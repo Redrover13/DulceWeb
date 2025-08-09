@@ -139,20 +139,6 @@ jobs:
           name: web-build
           path: apps/web/.next
           retention-days: 7
-          
-      - name: Upload docs build
-        uses: actions/upload-artifact@v4
-        with:
-          name: docs-build
-          path: apps/docs/build
-          retention-days: 7
-          
-      - name: Upload storybook build
-        uses: actions/upload-artifact@v4
-        with:
-          name: storybook-build
-          path: apps/storybook/storybook-static
-          retention-days: 7
 
   # Uncomment and configure when ready for deployment
   # deploy:
