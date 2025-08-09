@@ -17,40 +17,36 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Setup pnpm first (before Node.js) as recommended
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 8.0.0  # Exact version to match package.json
-          run_install: false
+      # Network diagnostics to check registry connectivity
+      - name: Network diagnostics
+        run: |
+          echo "Testing connection to npm registry..."
+          curl -v https://registry.npmjs.org/
+          echo "DNS lookup for registry.npmjs.org"
+          nslookup registry.npmjs.org
 
-      # Setup Node.js with pnpm caching
+      # Try with Node.js 16 instead of 20
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'pnpm'
+          node-version: 16
           registry-url: 'https://registry.npmjs.org/'
 
-      # Verify pnpm is properly installed and available
-      - name: Verify pnpm
-        run: pnpm --version
-
-      # Fix potential lockfile issues
-      - name: Fix lockfile
+      # Install dependencies using npm instead of pnpm
+      - name: Install dependencies with npm
         run: |
-          echo "Removing potentially incompatible lockfile"
-          rm -f pnpm-lock.yaml
-          echo "Setting up npm registry configuration"
-          pnpm config set registry https://registry.npmjs.org/
-          pnpm config set strict-ssl false --global
-
-      - name: Install dependencies
-        run: pnpm install
+          npm install
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN || '' }}
-          NPM_CONFIG_REGISTRY: https://registry.npmjs.org/
+          NODE_OPTIONS: "--max-old-space-size=4096"
 
+      # Now install pnpm for subsequent steps
+      - name: Install pnpm
+        run: |
+          npm install -g pnpm@8.0.0
+          pnpm --version
+
+      # Run remaining steps with pnpm
       - name: Lint
         run: pnpm --filter ./apps/web lint
 
