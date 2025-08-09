@@ -23,16 +23,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: ${{ env.PNPM_VERSION }}
-      
-      - name: Setup Node.js
+      - name: Setup Node.js with pnpm
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+          package-manager: pnpm@${{ env.PNPM_VERSION }}
       
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -50,16 +46,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: ${{ env.PNPM_VERSION }}
-      
-      - name: Setup Node.js
+      - name: Setup Node.js with pnpm
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+          package-manager: pnpm@${{ env.PNPM_VERSION }}
       
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -77,16 +69,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: ${{ env.PNPM_VERSION }}
-      
-      - name: Setup Node.js
+      - name: Setup Node.js with pnpm
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+          package-manager: pnpm@${{ env.PNPM_VERSION }}
       
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -113,16 +101,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: ${{ env.PNPM_VERSION }}
-      
-      - name: Setup Node.js
+      - name: Setup Node.js with pnpm
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+          package-manager: pnpm@${{ env.PNPM_VERSION }}
       
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
