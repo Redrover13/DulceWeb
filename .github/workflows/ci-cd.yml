@@ -17,58 +17,42 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Network diagnostics to check registry connectivity
-      - name: Network diagnostics
-        run: |
-          echo "Testing connection to npm registry..."
-          curl -v https://registry.npmjs.org/
-          echo "DNS lookup for registry.npmjs.org"
-          nslookup registry.npmjs.org
+      # Setup pnpm with the official action
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: false
 
-      # Try with Node.js 16 instead of 20
+      # Setup Node.js with pnpm caching
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 16
-          registry-url: 'https://registry.npmjs.org/'
+          node-version: 20
+          cache: 'pnpm'
 
-      # Install dependencies using npm instead of pnpm
-      - name: Install dependencies with npm
-        run: |
-          npm install
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN || '' }}
-          NODE_OPTIONS: "--max-old-space-size=4096"
+      # Install dependencies
+      - name: Install dependencies
+        run: pnpm install
 
-      # Now install pnpm for subsequent steps
-      - name: Install pnpm
-        run: |
-          npm install -g pnpm@8.0.0
-          pnpm --version
-
-      # Run remaining steps with pnpm
+      # Lint
       - name: Lint
         run: pnpm --filter ./apps/web lint
 
+      # Typecheck
       - name: Typecheck
         run: pnpm --filter ./apps/web typecheck
 
+      # Run GraphQL Codegen
       - name: Run GraphQL Codegen
         run: pnpm --filter ./apps/web codegen
 
+      # Build
       - name: Build
         run: pnpm --filter ./apps/web build
 
-      # Add test step here if you add tests in the future
-      # - name: Test
-      #   run: pnpm --filter ./apps/web test
-
-      - name: Upload production build (optional)
+      # Upload build artifacts
+      - name: Upload production build
         uses: actions/upload-artifact@v4
         with:
           name: nextjs-build
-          path: apps/web/.next
-
-      # Add deployment step here if deploying to Vercel, Azure, etc.
-      # - name: Deploy
-      #   run: ...
+          path: apps/web/.next	
