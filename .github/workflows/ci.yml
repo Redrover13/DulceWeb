@@ -21,10 +21,6 @@ jobs:
         with:
           version: 9
           run_install: true
-      - name: Enable Corepack and Activate pnpm
-        run: corepack enable && corepack prepare pnpm@9 --activate
-      - name: Install dependencies
-        run: pnpm install
       - name: Lint
         run: pnpm lint
       - name: Typecheck
