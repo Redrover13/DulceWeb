@@ -1,24 +1,17 @@
-import { wpClient } from "../lib/graphql";
-import { graphql } from "../gql";
+import { wpClient } from "@/lib/graphql"
+import { SITE_TITLE_QUERY } from "@/lib/queries"
 
-const SITE_TITLE_QUERY = graphql(`
-  query SiteTitle {
-    generalSettings {
-      title
-      description
-    }
-  }
-`);
+type SiteTitleResult = { generalSettings?: { title?: string | null } }
 
 export default async function HomePage() {
-  let title = "?";
-  let err: string | null = null;
+  let title = "Dulce de Saigon"
+  let err: string | null = null
 
   try {
-    const data = await wpClient.request(SITE_TITLE_QUERY);
-    title = data.generalSettings?.title ?? "No title";
+    const data = await wpClient.request<SiteTitleResult>(SITE_TITLE_QUERY)
+    title = data.generalSettings?.title ?? title
   } catch (e) {
-    err = (e as Error).message;
+    err = (e as Error).message
   }
 
   return (
@@ -32,5 +25,5 @@ export default async function HomePage() {
         )}
       </div>
     </main>
-  );
+  )
 }
